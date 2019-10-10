@@ -1,5 +1,7 @@
 package com.example.community.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -26,7 +28,8 @@ public class AuthorizeController {
 	private String redirectUri;
 	
 	@GetMapping("callback")
-	public String callback(@RequestParam(name = "code")String code,@RequestParam(name = "state")String state) {
+	public String callback(@RequestParam(name = "code")String code,@RequestParam(name = "state")String state,HttpServletRequest request) {
+		//session是通过HttpServletRequest拿到的
 		AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
 		accessTokenDTO.setCode(code);
 		accessTokenDTO.setRedirect_uri(redirectUri);
@@ -35,9 +38,15 @@ public class AuthorizeController {
 		accessTokenDTO.setState(state);
 		String accessToken = githubProvider.getAccessToken(accessTokenDTO);
 		GithubUser user = githubProvider.getUser(accessToken);
-		System.out.println(user.getName());
 		System.out.println(user.getId());
-		return "index";
+		if(user !=null) {
+			request.getSession().setAttribute("user", user);
+			return "redirect:/";//用redirct地址重新重定向到这个页面
+			//登录成功，写cookie和session
+		}else {
+			//登录失败，重新登录
+			return "redirect:/";
+		}
 	}
 
 }
