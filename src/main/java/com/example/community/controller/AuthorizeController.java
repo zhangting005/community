@@ -2,7 +2,9 @@ package com.example.community.controller;
 
 import java.util.UUID;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +37,8 @@ public class AuthorizeController {
 	private  UserMapper userMapper;
 	
 	@GetMapping("callback")
-	public String callback(@RequestParam(name = "code")String code,@RequestParam(name = "state")String state,HttpServletRequest request) {
+	public String callback(@RequestParam(name = "code")String code,@RequestParam(name = "state")String state,HttpServletRequest request
+			,HttpServletResponse response) {
 		//session是通过HttpServletRequest拿到的
 		AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
 		accessTokenDTO.setCode(code);
@@ -48,12 +51,16 @@ public class AuthorizeController {
 		System.out.println(githubUser.getId());
 		if(githubUser !=null) {
 			User user = new User();
-			user.setToken(UUID.randomUUID().toString());
+			String token = UUID.randomUUID().toString();
+			user.setToken(token);
 			user.setName(githubUser.getName());
 			user.setAccountId(String.valueOf(githubUser.getId()));
 			user.setGmtCreate(System.currentTimeMillis());
 			user.setGmtModified(user.getGmtCreate());
 			userMapper.insert(user);
+			//手动写入cookie,cookie是在response里面
+			//访问首页时，需要将cookie里key为token的信息拿到，到数据库里查，用来验证是否登录成功
+			response.addCookie(new Cookie("token",token));
 			request.getSession().setAttribute("user", githubUser);
 			return "redirect:/";//用redirct地址重新重定向到这个页面
 			//登录成功，写cookie和session

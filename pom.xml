@@ -41,10 +41,10 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 		<dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.45</version>
-        </dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.45</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
@@ -56,6 +56,12 @@
 			<version>4.1.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+
+
 		<!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -63,12 +69,6 @@
 			<version>1.2.58</version>
 			<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
 		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.4.199</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -77,6 +77,17 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>5.0.5</version>
+				<configuration>
+					<url>jdbc:mysql://localhost:3306/community</url>
+					<user>root</user>
+					<password></password>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
