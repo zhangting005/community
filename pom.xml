@@ -69,6 +69,14 @@
 			<version>1.2.58</version>
 			<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
 		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.4</version>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>

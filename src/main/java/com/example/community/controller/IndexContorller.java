@@ -10,31 +10,31 @@ import com.example.community.model.User;
 
 @Controller
 public class IndexContorller {
-	
+
 	@Autowired
 	private UserMapper userMapper;
-	
+
 	@GetMapping("/")
-	private String hello(HttpServletRequest request) {
+	private String index(HttpServletRequest request) {
 		System.out.println("hello");
 		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie : cookies) {
-			System.out.println("cookies"+cookie.getName());
-			if(cookie.getName().equals("token")) {
-				System.out.println("cookie.getName():"+cookie.getName());
-				String token = cookie.getValue();
-				System.out.println("token:"+token);
-				User user  = userMapper.findByToken(token);
-				if(user!=null) {
-					System.out.println("user!=null");
-					request.getSession().setAttribute("user", user);
+		if (cookies != null && cookies.length != 0) {
+			for (Cookie cookie : cookies) {
+				System.out.println("cookies" + cookie.getName());
+				if (cookie.getName().equals("token")) {
+					System.out.println("cookie.getName():" + cookie.getName());
+					String token = cookie.getValue();
+					System.out.println("token:" + token);
+					User user = userMapper.findByToken(token);
+					if (user != null) {
+						System.out.println("user!=null");
+						request.getSession().setAttribute("user", user);
+					}
+					break;
 				}
-				break;
 			}
 		}
-		
 		return "index";
-	} 
+	}
 
 }
- 
