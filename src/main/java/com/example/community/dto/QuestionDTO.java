@@ -1,9 +1,11 @@
-package com.example.community.model;
+package com.example.community.dto;
+
+import com.example.community.model.User;
 
 import lombok.Data;
 
 @Data
-public class Question {
+public class QuestionDTO {
 	
 	private Integer id;
 
@@ -25,4 +27,6 @@ public class Question {
 	
 	private String tag;
 	
+	private User user;
+
 }
