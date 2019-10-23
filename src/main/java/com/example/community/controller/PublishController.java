@@ -1,6 +1,5 @@
 package com.example.community.controller;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.community.mapper.QuestionMapper;
-import com.example.community.mapper.UserMapper;
 import com.example.community.model.Question;
 import com.example.community.model.User;
 
@@ -19,9 +17,6 @@ import com.example.community.model.User;
 public class PublishController {
 	@Autowired
 	private QuestionMapper questionMapper;
-
-	@Autowired
-	private UserMapper userMapper;
 
 	@GetMapping("/publish")
 	public String publish() {
@@ -47,22 +42,7 @@ public class PublishController {
 			model.addAttribute("error", "标签不能为空");
 			return "publish";
 		}
-		User user = null;
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null && cookies.length != 0) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("token")) {
-					System.out.println("cookie.getName():" + cookie.getName());
-					String token = cookie.getValue();
-					System.out.println("token:" + token);
-					user = userMapper.findByToken(token);
-					if (user != null) {
-						request.getSession().setAttribute("user", user);
-					}
-					break;
-				}
-			}
-		}
+		User user = (User) request.getSession().getAttribute("user");
 		if (user == null) {
 			model.addAttribute("error", "用户未登录");
 			return "publish";
