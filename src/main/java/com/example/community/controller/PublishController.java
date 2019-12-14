@@ -58,5 +58,6 @@ public class PublishController {
 
 		questionMapper.create(question);
 		return "redirect:/";
+		
 	}
 }

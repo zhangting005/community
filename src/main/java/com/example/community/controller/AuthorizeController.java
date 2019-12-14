@@ -2,6 +2,7 @@ package com.example.community.controller;
 
 import java.util.UUID;
 
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.community.dto.AccessTokenDTO;
 import com.example.community.dto.GithubUser;
-import com.example.community.mapper.UserMapper;
+import com.example.community.service.UserService;
 import com.example.community.model.User;
 import com.example.community.provider.GithubProvider;
 
@@ -32,9 +33,9 @@ public class AuthorizeController {
 	
 	@Value("${github.redirect.uri}")
 	private String redirectUri;
-	
+
 	@Autowired
-	private  UserMapper userMapper;
+	private  UserService userService;
 	
 	@GetMapping("callback")
 	public String callback(@RequestParam(name = "code")String code,@RequestParam(name = "state")String state,HttpServletRequest request
@@ -55,10 +56,8 @@ public class AuthorizeController {
 			user.setToken(token);
 			user.setName(githubUser.getName());
 			user.setAccountId(String.valueOf(githubUser.getId()));
-			user.setGmtCreate(System.currentTimeMillis());
-			user.setGmtModified(user.getGmtCreate());
 			user.setAvatarUrl(githubUser.getAvatarUrl());
-			userMapper.insert(user);
+			userService.createOrUpdate(user);
 			//手动写入cookie,cookie是在response里面
 			//访问首页时，需要将cookie里key为token的信息拿到，到数据库里查，用来验证是否登录成功
 			response.addCookie(new Cookie("token",token));
@@ -69,6 +68,16 @@ public class AuthorizeController {
 			//登录失败，重新登录
 			return "redirect:/";
 		}
+	}
+	
+	//退出登录方法
+	@GetMapping("logout")
+	public String logout(HttpServletRequest request,HttpServletResponse response) {
+		request.getSession().removeAttribute("user");
+		Cookie cookie = new Cookie("token",null);
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
+		return "redirect:/";
 	}
 
 }
